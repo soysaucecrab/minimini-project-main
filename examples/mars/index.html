@@ -27,8 +27,7 @@
         camera.lookAt(0, 0, 0);
         
         const gridHelper = new THREE.GridHelper(100, 100);
-        // scene.add(gridHelper);
-
+        scene.add(gridHelper);
         const render = () => {
             renderer.render(scene, camera);
         };
@@ -60,7 +59,7 @@
         const dt = 1e5; // 시간 단계 (초)
         // 중력 상수
         const G = 6.67430e-11; // 단위: m^3 kg^-1 s^-2
-        const AU = 1.496e11;
+        const AU = 1.496e11; //AU천문단위 * 1000 -> m
         const initEarthSpeed = 30; // 초기 속도 (km/s)
         const initMarsSpeed = 23.86; // 초기 속도 (km/s)
 
@@ -69,7 +68,6 @@
         // 태양, 지구, 화성 객체 생성
         const star1 = new Star(1.989e30, [0, 0, 0], [0, 0, 0]); 
         const star2 = new Star(5.972e24, [0,0,9.83], [initEarthSpeed/AU*10000, 0, 0]);
-
         const star3 = new Star(6.39e23, [0,0,15.2], [initMarsSpeed/AU*10000, 0, 0]);
 
 
@@ -113,7 +111,7 @@
         function calculateAngle(){
             previousAngle = currentAngle;
 
-            // 각 점의 위치 벡터를 구합니다.
+            // 위치 벡터
             const vector1 = new THREE.Vector3().fromArray(star1.position);
             const vector2 = new THREE.Vector3().fromArray(star2.position);
             const vector3 = new THREE.Vector3().fromArray(star3.position);
@@ -122,27 +120,25 @@
             const vector21 = vector2.clone().sub(vector1);
             const vector31 = vector3.clone().sub(vector1);
 
-            // 두 벡터 사이의 각을 계산합니다.
+            // 두 벡터 사이 각 계산
             const angle = vector21.angleTo(vector31); // 라디안 단위로 반환됩니다.
 
-            // 라디안을 각도로 변환합니다.
+            // 각도변환
             const angleDegrees = THREE.MathUtils.radToDeg(angle);
-            // console.log("star2-star1-star3 각도:", angleDegrees);
             currentAngle = angleDegrees;
 
             if((previousAngle>44.6)&&(currentAngle<44.6)){
-                // star2의 접선 방향 벡터를 구합니다.
+                // star2 : 접선 방향 벡터
                 var tangentDirection = new THREE.Vector3(Math.sin(40 * Math.PI / 180), 0, Math.cos(40 * Math.PI / 180)).normalize();
 
-                // sattellite의 초기 위치를 star2의 위치로 설정합니다.
+                // 초기위치 설정
                 const position = new THREE.Vector3().fromArray(star2.position);
                 var sattelliteInitialPosition = position.clone();
 
                 const satelliteInitialSpeed = tangentDirection.clone().multiplyScalar(kms/AU*10000);
 
-                // sattellite를 선언합니다.
+                // sattellite 선언
                 satellite = new Star(1e3, sattelliteInitialPosition.toArray(), [star2.velocity[0]+star2.velocity[0]*kms/30,star2.velocity[1]+star2.velocity[1]*kms/30,star2.velocity[2]+star2.velocity[2]*kms/30]);
-                // satellite = new Star(1e3, sattelliteInitialPosition.toArray(), [star2.velocity[0],star2.velocity[1],star2.velocity[2]]);
                 alert("발사됨!");
             }
             return angleDegrees;
