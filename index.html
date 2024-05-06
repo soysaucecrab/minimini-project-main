@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Vis Viva</title>
+  <title>GRAVITY SIMULATION</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,7 +32,7 @@
           <li class="l-section section section--is-active">
             <div class="intro">
               <div class="intro--banner">
-                <h1>VIS<br>VIVA<br>EQUATION</h1>
+                <h1>ROCKET<br>LAUNCH<br>SIMULATION</h1>
                 <img src="assets/img/introduction-visual.png" alt="Welcome">
               </div>
               <div class="intro--options">
@@ -41,18 +41,22 @@
                   <p>다른 물체를 공전하는 어떤 물체의 속도를 궤도의 긴반지름과 초점으로부터 물체까지의 거리로 나타내는 방정식</p>
                 </a>
                 <a href="#0">
-                  <h3>Three.JS</h3>
-                  <p>WebGL기반 JS 렌더링 라이브러리</p>
+                  <h3>harmonic law</h3>
+                  <p>행성의 공전 주기의 제곱은 공전 궤도 장반경의 세제곱에 비례함을 의미하는 케플러 3법칙</p>
                 </a>
                 <a href="#0">
-                  <h3>Made By</h3>
-                  <p>soysaucecrab</p>
+                  <h3>Three.JS</h3>
+                  <p>WebGL기반 JS 렌더링 라이브러리</p>
                 </a>
               </div>
             </div>
           </li>
           <li class="l-section section" id="move">
             <div class="about">
+            <div>
+              <input id="kms" type='number' min='-30' max='30' step='0.1' style="color: black;">
+              <input id="degree" type='number' min='-90' max='90' step='0.1' style="color: black;">
+            </div>
               <canvas id="canvas" width="960" height="640"></canvas>
               <button id="btn1" style="color: black;">start</button>
             </div>
@@ -112,13 +116,13 @@
 
       // 별 객체 정의
       class Star {
-          constructor(mass, position, velocity) {
+          constructor(mass, position, velocity,color,size) {
               this.mass = mass;
               this.position = position;
               this.velocity = velocity;
 
-              const sphereGeometry = new THREE.SphereGeometry(0.1);
-              const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffff66 });
+              const sphereGeometry = new THREE.SphereGeometry(size);
+              const sphereMaterial = new THREE.MeshBasicMaterial({ color: color });
               this.sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
               this.sphere.position.set(position[0],position[1],position[2]);
               scene.add(this.sphere); 
@@ -136,11 +140,13 @@
       const initMarsSpeed = 23.86; // 초기 속도 (km/s)
 
       var kms = 2.95;
+      var inputAngle =44.6 ;
 
       // 태양, 지구, 화성 객체 생성
-      const star1 = new Star(1.989e30, [0, 0, 0], [0, 0, 0]); 
-      const star2 = new Star(5.972e24, [0,0,9.83], [initEarthSpeed/AU*10000, 0, 0]);
-      const star3 = new Star(6.39e23, [0,0,15.2], [initMarsSpeed/AU*10000, 0, 0]);
+      const star1 = new Star(1.989e30, [0, 0, 0], [0, 0, 0],0xff7f00,0.4); 
+      const star2 = new Star(5.972e24, [0,0,9.83], [initEarthSpeed/AU*10000, 0, 0],0x3fe87f,0.2);
+      const star3 = new Star(6.39e23, [0,0,15.2], [initMarsSpeed/AU*10000, 0, 0],0xfe4266,0.17);
+
 
 
       // 중력에 의한 가속도 계산 (3차원)
@@ -178,7 +184,7 @@
       var previousAngle;
       var currentAngle;
 
-      var satellite = new Star(1e-5, [0,0,1e10], [0,0,0]);
+      var satellite = new Star(1e-5, [0,0,1e10], [0,0,0],0xffffff, 0.1);
 
       function calculateAngle(){
           previousAngle = currentAngle;
@@ -199,7 +205,7 @@
           const angleDegrees = THREE.MathUtils.radToDeg(angle);
           currentAngle = angleDegrees;
 
-          if((previousAngle>44.6)&&(currentAngle<44.6)){
+          if((previousAngle>inputAngle)&&(currentAngle<inputAngle)){
               // star2 : 접선 방향 벡터
               var tangentDirection = new THREE.Vector3(Math.sin(40 * Math.PI / 180), 0, Math.cos(40 * Math.PI / 180)).normalize();
 
@@ -210,7 +216,7 @@
               const satelliteInitialSpeed = tangentDirection.clone().multiplyScalar(kms/AU*10000);
 
               // sattellite 선언
-              satellite = new Star(1e3, sattelliteInitialPosition.toArray(), [star2.velocity[0]+star2.velocity[0]*kms/30,star2.velocity[1]+star2.velocity[1]*kms/30,star2.velocity[2]+star2.velocity[2]*kms/30]);
+              satellite = new Star(1e3, sattelliteInitialPosition.toArray(), [star2.velocity[0]+star2.velocity[0]*kms/30,star2.velocity[1]+star2.velocity[1]*kms/30,star2.velocity[2]+star2.velocity[2]*kms/30],0xffffff,0.1);
               return;
           }
           return angleDegrees;
@@ -267,6 +273,8 @@
       function cal(){
        if(act){
           act=false;
+          kms = parseFloat(document.getElementById('kms').value);
+          inputAngle = parseFloat(document.getElementById('degree').value);
           calculate();
        }
        else{
