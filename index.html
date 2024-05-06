@@ -59,7 +59,7 @@
               <a style="color: gray;">* 미입력시 실제값이 들어갑니다.</a>
             </div>
               <canvas id="canvas" width="960" height="640"></canvas>
-              <button id="btn1" style="color: black;">start</button>
+              <button id="btn1" style="color: black;" class="start">start</button>
             </div>
           </li>
           <li class="l-section section">
@@ -274,6 +274,8 @@
       function cal(){
        if(act){
           act=false;
+          let x = document.getElementsByClassName("start")[0];
+          x.innerText="reload"; 
           kms = parseFloat(document.getElementById('kms').value);
           inputAngle = parseFloat(document.getElementById('degree').value);
           if(!kms){
