@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>GRAVITY SIMULATION</title>
+  <title>GRAVITY SIMULATION_mer</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +9,7 @@
   <meta name="keywords" content="global, template, html, sass, jquery">
   <meta name="author" content="Bucky Maler">
   <link rel="stylesheet" href="assets/css/main.css">
+
 </head>
 <body>
 
@@ -53,11 +54,16 @@
           </li>
           <li class="l-section section" id="move">
             <div class="about">
-            <div>
-              <input id="kms" type='number' min='-30' max='30' step='0.1' style="color: black; width: 100px;"  placeholder="속도[km/s]">
-              <input id="degree" type='number' min='-90' max='90' step='0.1' style="color: black; width: 100px;" placeholder="각도[°]">
-              <a style="color: gray;">* 미입력시 실제값이 들어갑니다.</a>
-            </div>
+              <div>
+                  <input id="kms" type='number' min='-30' max='30' step='0.1' style="color: black; width: 100px; height: 30px;"  placeholder="속도[km/s]">
+                  <input id="degree" type='number' min='-90' max='90' step='0.1' style="color: black; width: 100px; height: 30px;" placeholder="각도[°]">
+                  <input id="mass" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 질량(10^23kg)">
+                  <input id="pl_kms" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 공전속도(km/s)">
+                  <input id="pl_au" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성-태양 거리(0.1AU)">
+                  <a style="color: gray;"><br>* 미입력시 지구-수성에서의 실제값이 들어갑니다.</a>
+                
+              </div>
+              
               <canvas id="canvas" width="960" height="640"></canvas>
               <button id="btn1" style="color: black;" class="start">start</button>
             </div>
@@ -133,20 +139,23 @@
           }
       }
 
-      const dt = 1e5; // 시간 단계 (초)
+      const dt = 5e4; // 시간 단계 (초)
       // 중력 상수
       const G = 6.67430e-11; // 단위: m^3 kg^-1 s^-2
       const AU = 1.496e11; //AU천문단위 * 1000 -> m
       const initEarthSpeed = 30; // 초기 속도 (km/s)
-      const initMarsSpeed = 25.2; // 초기 속도 (km/s)
+      var initMerSpeed = 48; // 초기 속도 (km/s)
+      var nau=3.8;
 
       var kms = 2.6;
       var inputAngle =44;
 
+
+
       // 태양, 지구, 화성 객체 생성
       const star1 = new Star(1.989e30, [0, 0, 0], [0, 0, 0],0xff7f00,0.4); 
-      const star2 = new Star(5.972e24, [0,0,10], [initEarthSpeed/AU*10000, 0, 0],0x3fe87f,0.2);
-      const star3 = new Star(6.39e23, [0,0,15.2], [initMarsSpeed/AU*10000, 0, 0],0xfe4266,0.17);
+      const star2 = new Star(5.97e24, [0,0,10], [initEarthSpeed/AU*10000, 0, 0],0x3fe87f,0.2);
+      const star3 = new Star(3.2e23, [0,0,nau], [initMerSpeed/AU*10000, 0, 0],0xfe4266,0.17);
 
 
 
@@ -206,7 +215,7 @@
           const angleDegrees = THREE.MathUtils.radToDeg(angle);
           currentAngle = angleDegrees;
 
-          if((previousAngle>inputAngle)&&(currentAngle<inputAngle)){
+          if((previousAngle<inputAngle)&&(currentAngle>inputAngle)&&(inputNau<10)){
               // star2 : 접선 방향 벡터
               var tangentDirection = new THREE.Vector3(Math.sin(40 * Math.PI / 180), 0, Math.cos(40 * Math.PI / 180)).normalize();
 
@@ -220,6 +229,20 @@
               satellite = new Star(1e3, sattelliteInitialPosition.toArray(), [star2.velocity[0]+star2.velocity[0]*kms/30,star2.velocity[1]+star2.velocity[1]*kms/30,star2.velocity[2]+star2.velocity[2]*kms/30],0xffffff,0.1);
               return;
           }
+          if((previousAngle>inputAngle)&&(currentAngle<inputAngle)&&(inputNau>10)){
+            // star2 : 접선 방향 벡터
+            var tangentDirection = new THREE.Vector3(Math.sin(40 * Math.PI / 180), 0, Math.cos(40 * Math.PI / 180)).normalize();
+
+            // 초기위치 설정
+            const position = new THREE.Vector3().fromArray(star2.position);
+            var sattelliteInitialPosition = position.clone();
+
+            const satelliteInitialSpeed = tangentDirection.clone().multiplyScalar(kms/AU*10000);
+
+            // sattellite 선언
+            satellite = new Star(1e3, sattelliteInitialPosition.toArray(), [star2.velocity[0]+star2.velocity[0]*kms/30,star2.velocity[1]+star2.velocity[1]*kms/30,star2.velocity[2]+star2.velocity[2]*kms/30],0xffffff,0.1);
+            return;
+        }
           return angleDegrees;
       }
 
@@ -269,6 +292,10 @@
       let i = 0;
       var act=true;
 
+      var inputMass;
+      var inputSpeed;
+      var inputNau;
+
       document.getElementById("btn1").addEventListener('click',cal);
 
       function cal(){
@@ -278,11 +305,26 @@
           x.innerText="reload"; 
           kms = parseFloat(document.getElementById('kms').value);
           inputAngle = parseFloat(document.getElementById('degree').value);
+          inputMass = parseFloat(document.getElementById('mass').value);
+          inputSpeed = parseFloat(document.getElementById('pl_kms').value);
+          inputNau = parseFloat(document.getElementById('pl_au').value);
           if(!kms){
-            kms=3;
+            kms=-8.6;
           }
           if(!inputAngle){
-            inputAngle = 44.6;
+            inputAngle = 105;
+          }
+          if(inputMass){
+            star3.mass = inputMass*1e23;
+          }
+          if(inputSpeed){
+            star3.velocity[0] = inputSpeed/AU*10000;
+          }
+          if(inputNau){
+            star3.position[2]=inputNau;
+          }
+          else{
+            inputNau=nau;
           }
           calculate();
        }
