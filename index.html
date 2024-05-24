@@ -8,7 +8,8 @@
   <meta name="description" content="HTML5 website template">
   <meta name="keywords" content="global, template, html, sass, jquery">
   <meta name="author" content="Bucky Maler">
-  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/ma.css">
+  <
 
 </head>
 <body>
@@ -21,12 +22,16 @@
         <input id="mass" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 질량(10^23kg)">
         <input id="pl_kms" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 공전속도(km/s)">
         <input id="pl_au" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성-태양 거리(0.1AU)">
-        <a style="color: gray;"><br>* 미입력시 지구-수성에서의 실제값이 들어갑니다.</a>
-      
+        <input id="time" type='range' min="1" max="10" style="color: black; width: 200px; height: 30px;" class="slider">
     </form>
     
     <canvas id="canvas" width="960" height="640"></canvas>
-    <button id="btn1" style="color: black;" class="start">start</button>
+    <div class="buttons">
+      <button id="mercury" style="color: black;" class="mercury">mercury</button>
+      <button id="mars" style="color: black;" class="mars">mars</button>
+      <button id="btn1" style="color: black; width: 400px;" class="start">start</button>
+    </div>
+    
   </div>
 <script src="examples/deps/three/build/three.min.js"></script>
 <script src="examples/deps/three/examples/js/controls/OrbitControls.js"></script>
@@ -35,7 +40,6 @@
 <script type="module">
   (async () => {
       /* init */
-
       const canvas = document.getElementById("canvas");
       const camera = new THREE.PerspectiveCamera(75, canvas.width/canvas.height, 0.1, 1000);
 
@@ -73,7 +77,7 @@
           }
       }
 
-      const dt = 5e4; // 시간 단계 (초)
+      var dt = 5e4; // 시간 단계 (초)
       // 중력 상수
       const G = 6.67430e-11; // 단위: m^3 kg^-1 s^-2
       const AU = 1.496e11; //AU천문단위 * 1000 -> m
@@ -192,6 +196,7 @@
       const numSteps = 10000; // 시뮬레이션 단계 수
 
       function calculate() {
+          var t=parseInt(document.getElementById('time').value);
           calculateAngle();
 
           updatePositions(star1, star2, dt);
@@ -219,7 +224,9 @@
           render(); // 렌더 함수 호출
           i++;
           if (i < numSteps) {
-              setTimeout(calculate, 10); // 1초 후에 다음 단계를 계산하도록 호출
+              
+              console.log(t);
+              setTimeout(calculate, t);
           }
       }
       render();
@@ -230,7 +237,41 @@
       var inputSpeed;
       var inputNau;
 
+      document.getElementById("pl_au").addEventListener('change',change);
+      function change(){
+        star3.position[2]=document.getElementById('pl_au').value;
+        star3.posit();
+        render();
+      }
+
+      document.getElementById("mercury").addEventListener('click',mercury);
+      document.getElementById("mars").addEventListener('click',mars);
       document.getElementById("btn1").addEventListener('click',cal);
+
+      function mercury(){
+        if(act){
+        document.getElementById('kms').value=-8.6;
+        document.getElementById('degree').value=105;
+        document.getElementById('mass').value=3.2;
+        document.getElementById('pl_kms').value=48;
+        document.getElementById('pl_au').value=3.8;
+        star3.position[2]=3.8;
+        star3.posit();
+        render();
+        }
+      }
+      function mars(){
+        if(act){
+        document.getElementById('kms').value=3;
+        document.getElementById('degree').value=44.6;
+        document.getElementById('mass').value=6.3;
+        document.getElementById('pl_kms').value=25.2;
+        document.getElementById('pl_au').value=15.2;
+        star3.position[2]=15.2;
+        star3.posit();
+        render();
+        }
+      }
 
       function cal(){
        if(act){
@@ -242,24 +283,16 @@
           inputMass = parseFloat(document.getElementById('mass').value);
           inputSpeed = parseFloat(document.getElementById('pl_kms').value);
           inputNau = parseFloat(document.getElementById('pl_au').value);
-          if(!kms){
-            kms=-8.6;
+          
+          if(!kms||!inputAngle||!inputMass||!inputSpeed||!inputNau){
+            alert("please write someting");
+            location.reload();
           }
-          if(!inputAngle){
-            inputAngle = 105;
-          }
-          if(inputMass){
-            star3.mass = inputMass*1e23;
-          }
-          if(inputSpeed){
-            star3.velocity[0] = inputSpeed/AU*10000;
-          }
-          if(inputNau){
-            star3.position[2]=inputNau;
-          }
-          else{
-            inputNau=nau;
-          }
+          star3.mass = inputMass*1e23;
+          star3.velocity[0] = inputSpeed/AU*10000;
+          star3.position[2]=inputNau;
+
+          
           calculate();
        }
        else{
