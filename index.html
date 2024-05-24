@@ -13,87 +13,21 @@
 </head>
 <body>
 
-<div class="perspective effect-rotate-left">
-  <div class="container"><div class="outer-nav--return"></div>
-    <div id="viewport" class="l-viewport">
-      <div class="l-wrapper">
-        <header class="header">
-          <div class="header--nav-toggle">
-            <span></span>
-          </div>
-        </header>
-        <nav class="l-side-nav">
-          <ul class="side-nav">
-            <li class="is-active"><span>Home</span></li>
-            <li><span>SIMULATION</span></li>
-            <li><span>About</span></li>
-          </ul>
-        </nav>
-        <ul class="l-main-content main-content">
-          <li class="l-section section section--is-active">
-            <div class="intro">
-              <div class="intro--banner">
-                <h1>ROCKET<br>LAUNCH<br>SIMULATION</h1>
-                <img src="assets/img/introduction-visual.png" alt="Welcome">
-              </div>
-              <div class="intro--options">
-                <a href="#0">
-                  <h3>vis viva equation</h3>
-                  <p>다른 물체를 공전하는 어떤 물체의 속도를 궤도의 긴반지름과 초점으로부터 물체까지의 거리로 나타내는 방정식</p>
-                </a>
-                <a href="#0">
-                  <h3>harmonic law</h3>
-                  <p>행성의 공전 주기의 제곱은 공전 궤도 장반경의 세제곱에 비례함을 의미하는 케플러 3법칙</p>
-                </a>
-                <a href="#0">
-                  <h3>Three.JS</h3>
-                  <p>WebGL기반 JS 렌더링 라이브러리</p>
-                </a>
-              </div>
-            </div>
-          </li>
-          <li class="l-section section" id="move">
-            <div class="about">
-              <div>
-                  <input id="kms" type='number' min='-30' max='30' step='0.1' style="color: black; width: 100px; height: 30px;"  placeholder="속도[km/s]">
-                  <input id="degree" type='number' min='-90' max='90' step='0.1' style="color: black; width: 100px; height: 30px;" placeholder="각도[°]">
-                  <input id="mass" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 질량(10^23kg)">
-                  <input id="pl_kms" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 공전속도(km/s)">
-                  <input id="pl_au" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성-태양 거리(0.1AU)">
-                  <a style="color: gray;"><br>* 미입력시 지구-수성에서의 실제값이 들어갑니다.</a>
-                
-              </div>
-              
-              <canvas id="canvas" width="960" height="640"></canvas>
-              <button id="btn1" style="color: black;" class="start">start</button>
-            </div>
-          </li>
-          <li class="l-section section">
-            <div class="contact">
-              <div class="contact--lockup">
-                <div class="modal">
-                  <div class="modal--information">
-                    <a href="mailto:ouremail@gmail.com">soysaucecrab</a>
-                  </div>
-                  <ul class="modal--options">
-                    <li><a href="https://school.gyo6.net/gsshs/main.do?sysId=gsshs" target="_blank">School</a></li>
-                    <li><a href="https://github.com/soysaucecrab/minimini-project-main" target="_blank">Github</a></li>
-                    <li><a href="mailto:kimzinu07@gmail.com">Contact Me</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+  <div class="about">
+    <form>
+      <br>
+        <input id="kms" type='number' min='-30' max='30' step='0.1' style="color: black; width: 100px; height: 30px;"  placeholder="속도[km/s]">
+        <input id="degree" type='number' min='-90' max='90' step='0.1' style="color: black; width: 100px; height: 30px;" placeholder="각도[°]">
+        <input id="mass" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 질량(10^23kg)">
+        <input id="pl_kms" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성 공전속도(km/s)">
+        <input id="pl_au" type='number' style="color: black; width: 200px; height: 30px;"  placeholder="행성-태양 거리(0.1AU)">
+        <a style="color: gray;"><br>* 미입력시 지구-수성에서의 실제값이 들어갑니다.</a>
+      
+    </form>
+    
+    <canvas id="canvas" width="960" height="640"></canvas>
+    <button id="btn1" style="color: black;" class="start">start</button>
   </div>
-  <ul class="outer-nav">
-    <li class="is-active">Home</li>
-    <li>SIMULATION</li>
-    <li>About</li>
-  </ul>
-</div>
 <script src="examples/deps/three/build/three.min.js"></script>
 <script src="examples/deps/three/examples/js/controls/OrbitControls.js"></script>
 <script src="examples/deps/three/examples/js/libs/stats.min.js"></script>
@@ -335,8 +269,5 @@
 
   })(); 
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-2.2.4.min.js"><\/script>')</script>
-<script src="assets/js/functions-min.js"></script>
 </body>
 </html>
